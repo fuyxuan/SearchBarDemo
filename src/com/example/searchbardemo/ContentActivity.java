@@ -8,6 +8,7 @@ import java.util.HashMap;
 
 import android.content.Intent;
 import android.content.res.AssetManager;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
@@ -93,9 +94,9 @@ public class ContentActivity extends BaseActivity {
 					textView.setText(readStream(assets.open("content_tainan.txt")));
 					MapActivity.CITY_CORRDINATE_X = 23.306828;MapActivity.CITY_CORRDINATE_Y = 120.323119;
 				}
-				textView.setTextColor(MainActivity.TEXT_COLOR);
-				textView.setTextSize(MainActivity.TEXT_SIZE);
-				llActivityContext.setBackgroundColor(MainActivity.BACKGROUND_COLOR);
+				textView.setTextColor(Color.parseColor(	MainActivity.TEXT_COLOR));
+				textView.setTextSize(Integer.parseInt(MainActivity.TEXT_SIZE));
+				llActivityContext.setBackgroundColor(Color.parseColor(MainActivity.BACKGROUND_COLOR));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

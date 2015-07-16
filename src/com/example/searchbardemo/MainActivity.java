@@ -11,7 +11,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.example.searchbardemo.adapter.ImageAdapter;
-import com.example.searchbardemo.dialog.ModifyStyleDialog;
 import com.example.searchbardemo.dialog.MultiModifyChoiceDialog;
 import com.example.searchbardemo.helper.SharedPreferencesHelper;
 
@@ -42,15 +41,11 @@ import android.text.TextWatcher;
 public class MainActivity extends BaseActivity {
 	Views views = new Views();
 
-    public static int TEXT_SIZE = 20;
-    public static int TEXT_COLOR = Color.BLACK;
-    public static int BACKGROUND_COLOR = Color.WHITE;
+    public static String TEXT_SIZE = "20";
+    public static String TEXT_COLOR = "#0000FF";
+    public static String BACKGROUND_COLOR = "#00FF00";
     private Context context;
     private LinearLayout llActivityMain;
-    private Editor editor;
- 
-  
-    
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -59,42 +54,26 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
         this.context = this;
         views.viewsInit();
-        
-        
-       
     }
 
   
     
-    public interface ModifyColorStyle{
-        public void color(int colorInt);
-    }
-    public interface ModifyTextSizeStyle{ 
-        public void size(int textSize);
-    }
-    public interface ModifySingleStyle{  // 單選callBack 
-        public void backgroundSingle(int backgroundColor);
-        public void textColorSingle(int textColor);
-        public void textSizeSingle(int textSize);
-    }
-    public interface MultiModifyChoiceStyle{ //多選一次修改 callBack
-        public void multibackground(int backgroundColor);
-        public void multitextColor(int textColor);
-        public void multitextSize(int textSize);
+    public interface MultiModifyChoiceStyleCallback{
+        public void modifyStyle(String backgroundColor, String textColor, String textSize);
     }
     
     class Views implements ViewsInterface {
     	
-    	   private GridView gridView;
+    	   	private GridView gridView;
     	    private EditText edittext;
     	    private Button btnModifyStyle;
     	    private String inputText;
     	    
     	    private HashMap<Integer, Integer> hashMap;
     	    private String[] cityStrList = new String[] { "台北", "桃園","新竹","苗栗","台中","彰化", "台南",
-    	                                            "台北", "桃園","新竹","苗栗","台中","彰化", "台南",
-    	                                            "台北", "桃園","新竹","苗栗","台中","彰化","台南",
-    	                                            "台北", "桃園","新竹","苗栗","台中","彰化" };
+    	                                                  "台北", "桃園","新竹","苗栗","台中","彰化", "台南",
+    	                                                  "台北", "桃園","新竹","苗栗","台中","彰化","台南",
+    	                                                  "台北", "桃園","新竹","苗栗","台中","彰化" };
     	    private int[] imageCityList = { 
     	                    R.drawable.image01, R.drawable.image02,
     	                    R.drawable.image03, R.drawable.image04,
@@ -116,11 +95,9 @@ public class MainActivity extends BaseActivity {
     	    private ArrayList<String> text_sort = new ArrayList<String>();
     	    private ArrayList<Integer> image_sort = new ArrayList<Integer>();
     	    private ImageAdapter  imageAdapter;
-    	    private ModifyStyleDialog modifyStyleDialog ;
+    	    private MultiModifyChoiceStyleCallback multiModifyChoiceStyleCallback;
     	    private MultiModifyChoiceDialog multiModifyChoiceDialog;
-    	   
     	    private JSONArray jsonArray,jsonArray_sort;
-    	    private SharedPreferences sharedPreferences ;
     	   
 
 			@Override
@@ -134,14 +111,13 @@ public class MainActivity extends BaseActivity {
 			@Override
 			public void findViews() {
 				
-			sharedPreferences = getSharedPreferences("searchbardemo", 0);
 			hashMap = new HashMap<Integer, Integer>();
 			jsonArray = new JSONArray();
-			editor = sharedPreferences.edit();
 			gridView = (GridView) findViewById(R.id.gridView1);
 			edittext = (EditText) findViewById(R.id.editText);
 			btnModifyStyle = (Button) findViewById(R.id.btn_modify_style);
 			llActivityMain = (LinearLayout) findViewById(R.id.ll_activity_main);
+			//multiModifyChoiceDialog = new MultiModifyChoiceDialog(context, multiModifyChoiceStyleCallback)
 			setInterfaceCallBack();
 			setView();
 			setAction();
@@ -150,63 +126,54 @@ public class MainActivity extends BaseActivity {
 		
 			@Override
 			public void setViews() {
-				// TODO Auto-generated method stub
 				
 			}
 		
 			@Override
 			public void setActions() {
-				// TODO Auto-generated method stub
 				
 			}
 			
 			    private void setInterfaceCallBack(){
 			    	
-			    	 modifyStyleDialog = new ModifyStyleDialog(context ,new ModifySingleStyle() {
-			             @Override
-			             public void textSizeSingle(int textSize) {
-			                 TEXT_SIZE = textSize;
-			                 imageAdapter.notifyDataSetChanged();
+			    	multiModifyChoiceDialog = new MultiModifyChoiceDialog(context,config, new MultiModifyChoiceStyleCallback() {
+						
+			    		@Override
+						public void modifyStyle(String backgroundColor,String textColor, String textSize) {
+			    			Log.i("msg","backgroundColor"+backgroundColor+"   textColor:"+textColor+"   textSize:"+textSize);
+							 TEXT_SIZE = textSize;
+							 TEXT_COLOR = textColor;
+							 BACKGROUND_COLOR = backgroundColor;
+							 llActivityMain.setBackgroundColor(Color.parseColor(BACKGROUND_COLOR));
+							 imageAdapter.notifyDataSetChanged();
 			                 setAction();
-			                 Log.i("msg","Main_textSize"+textSize);
-			             }
-			             @Override
-			             public void textColorSingle(int textColor) {
-			                 TEXT_COLOR = textColor;
-			                 imageAdapter.notifyDataSetChanged();
-			                 Log.i("msg","Main_textSize"+textColor);
-			                 setAction();
-			             }
-			             @Override
-			             public void backgroundSingle(int backgroundColor) {
-			                 BACKGROUND_COLOR = backgroundColor;
-			                 llActivityMain.setBackgroundColor(backgroundColor);
-			             }
-			         } );
-
-			         multiModifyChoiceDialog = new MultiModifyChoiceDialog(context , new MultiModifyChoiceStyle() {
-			             @Override
-			             public void multitextSize(int textSize) {
-			                 TEXT_SIZE = textSize;
-			                 Log.i("msg","interface_text_size"+TEXT_SIZE);
-			                 imageAdapter.notifyDataSetChanged();
-			                 setAction();
-			             }
-			             @Override
-			             public void multitextColor(int textColor) {
-			                 TEXT_COLOR = textColor;
-			                 Log.i("msg","interface_text_color"+TEXT_COLOR);
-			                 imageAdapter.notifyDataSetChanged();
-			                 setAction();
-			             }
-			             @Override
-			             public void multibackground(int backgroundColor) {
-			                 BACKGROUND_COLOR = backgroundColor;
-			                 llActivityMain.setBackgroundColor(BACKGROUND_COLOR);
-			                 Log.i("msg","interface_backGround"+BACKGROUND_COLOR);
-
-			             }
-			         });
+						}
+					});
+			        		 
+			        		 
+//			        		 context , new MultiModifyChoiceStyle() {
+//			             @Override
+//			             public void multitextSize(int textSize) {
+//			                 TEXT_SIZE = textSize;
+//			                 Log.i("msg","interface_text_size"+TEXT_SIZE);
+//			                 imageAdapter.notifyDataSetChanged();
+//			                 setAction();
+//			             }
+//			             @Override
+//			             public void multitextColor(int textColor) {
+//			                 TEXT_COLOR = textColor;
+//			                 Log.i("msg","interface_text_color"+TEXT_COLOR);
+//			                 imageAdapter.notifyDataSetChanged();
+//			                 setAction();
+//			             }
+//			             @Override
+//			             public void multibackground(int backgroundColor) {
+//			                 BACKGROUND_COLOR = backgroundColor;
+//			                 llActivityMain.setBackgroundColor(BACKGROUND_COLOR);
+//			                 Log.i("msg","interface_backGround"+BACKGROUND_COLOR);
+//
+//			             }
+//			         });
 			    	
 			    }
 			    private void setView(){
@@ -226,19 +193,17 @@ public class MainActivity extends BaseActivity {
 						hashMap.put(i, imageCityList[i]);
 					}
 					imageAdapter = new ImageAdapter(context, jsonArray, TEXT_COLOR,TEXT_SIZE);
-					llActivityMain.setBackgroundColor(BACKGROUND_COLOR);
+					llActivityMain.setBackgroundColor(Color.parseColor(BACKGROUND_COLOR));
 					imageAdapter.notifyDataSetChanged();
 					gridView.setAdapter(imageAdapter);
-					
-					////===========
-					 SharedPreferences sharedPreferences = getSharedPreferences("searchbardemo", Context.MODE_PRIVATE);
-				        int  textSize = sharedPreferences.getInt("TEXT_SIZE", 20),
-				             textColor = sharedPreferences.getInt("TEXT_COLOR", Color.BLACK),
-				             bgColor = sharedPreferences.getInt("BG_COLOR", Color.WHITE);
+					SharedPreferences sharedPreferences = getSharedPreferences("searchbardemo", Context.MODE_PRIVATE);
+				        String  textSize = sharedPreferences.getString("TEXT_SIZE", "20"),
+				        		textColor = sharedPreferences.getString("TEXT_COLOR", "#0000FF"),
+				        		bgColor = sharedPreferences.getString("BG_COLOR", "#00FF00");
 				        TEXT_SIZE = textSize;
 				        TEXT_COLOR = textColor;
 				        BACKGROUND_COLOR = bgColor;
-				        llActivityMain.setBackgroundColor(BACKGROUND_COLOR);
+				        llActivityMain.setBackgroundColor(Color.parseColor(BACKGROUND_COLOR));
 			    	
 			    }
 
@@ -333,10 +298,10 @@ public class MainActivity extends BaseActivity {
 //        int  textSize = sharedPreferences.getInt("TEXT_SIZE", 20),
 //             textColor = sharedPreferences.getInt("TEXT_COLOR", Color.BLACK),
 //             bgColor = sharedPreferences.getInt("BG_COLOR", Color.WHITE);
-        TEXT_SIZE = SharedPreferencesHelper.getSharedPreferencesInt(context,"TEXT_SIZE", 20);
-        TEXT_COLOR =  SharedPreferencesHelper.getSharedPreferencesInt(context,"TEXT_COLOR", Color.BLACK);
-        BACKGROUND_COLOR = SharedPreferencesHelper.getSharedPreferencesInt(context,"BG_COLOR", Color.WHITE);
-        llActivityMain.setBackgroundColor(BACKGROUND_COLOR);
+        TEXT_SIZE = config.getString("TEXT_SIZE","20");
+        TEXT_COLOR =  config.getString("TEXT_COLOR", "#0000FF");
+        BACKGROUND_COLOR = config.getString("BG_COLOR", "#00FF00");
+        llActivityMain.setBackgroundColor(Color.parseColor(BACKGROUND_COLOR));
     }  
 
     @Override  
@@ -348,33 +313,5 @@ public class MainActivity extends BaseActivity {
 //              .putInt("TEXT_COLOR", TEXT_COLOR)
 //              .putInt("BG_COLOR", BACKGROUND_COLOR).commit();
     }  
-    
-    @Override  
-    protected void onDestroy() {  
-        super.onDestroy();  
-        Log.v("msg","onDestroy");
-    }  
-    
-	@Override
-	public void onStart() {
-		super.onStart();
-		Log.v("msg", "onStart");
-	}
-
-	@Override
-	public void onResume() {
-		super.onResume();
-		Log.v("msg", "onResume");
-	}
-
-	@Override
-	public void onStop() {
-		super.onStop();
-		Log.v("msg", "onStop");
-	}
-   
-
-  
-  
 
 }

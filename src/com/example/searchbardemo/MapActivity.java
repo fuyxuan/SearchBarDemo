@@ -64,39 +64,6 @@ public class MapActivity extends BaseActivity {
         uis.setRotateGesturesEnabled(true); 
        
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(cityCoordinate, 15));
-//        btnReturnHome.setOnClickListener(new OnClickListener() {
-//			@Override
-//			public void onClick(View v) {
-//				Intent intent = new Intent(MapActivity.this,MainActivity.class);
-//				startActivity(intent);
-//				finish();
-//			}
-//		});
-//        
-//        btnReturnCity.setOnClickListener(new OnClickListener() {
-//			@Override
-//			public void onClick(View v) {
-//				//指定坐標地址
-//				map.moveCamera(CameraUpdateFactory.newLatLngZoom(cityCoordinate, 15));
-//			}
-//		});
-//        
-//        btnBigger.setOnClickListener(new OnClickListener() {
-//			@Override
-//			public void onClick(View v) {
-//				//放大地圖
-//				map.animateCamera(CameraUpdateFactory.zoomIn());
-//			}
-//		});
-//        
-//        btnMinner.setOnClickListener(new OnClickListener() {
-//			@Override
-//			public void onClick(View v) {
-//				//縮小地圖
-//				map.animateCamera(CameraUpdateFactory.zoomOut());
-//			}
-//		});
-        
     	
     }
 

@@ -7,7 +7,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.example.searchbardemo.MainActivity;
-import com.example.searchbardemo.MainActivity.ModifyTextSizeStyle;
 import com.example.searchbardemo.R;
 
 import android.app.Activity;
@@ -31,7 +30,7 @@ public class ImageAdapter extends BaseAdapter {
 
 	}
 	
-	public ImageAdapter(Context context,JSONArray jsonArray,int textColor , int textSize){
+	public ImageAdapter(Context context,JSONArray jsonArray,String textColor , String textSize){
 
 		this.context = context;
 		this.jsonArray = jsonArray;
@@ -55,8 +54,8 @@ public class ImageAdapter extends BaseAdapter {
 		} else {
 			holder = (ViewHolder) convertView.getTag();
 		}
-		holder.textView.setTextColor(MainActivity.TEXT_COLOR);
-		holder.textView.setTextSize(MainActivity.TEXT_SIZE);
+		holder.textView.setTextColor(Color.parseColor(MainActivity.TEXT_COLOR));
+		holder.textView.setTextSize(Integer.parseInt(MainActivity.TEXT_SIZE));
 		
 		JSONObject obj;
 		try {
